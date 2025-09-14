@@ -1,0 +1,1 @@
+CREATE INDEX idx_establishments_location ON establishments USING GIST (location);
