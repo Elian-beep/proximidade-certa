@@ -2,8 +2,9 @@ package com.elian.proximidade_certa.repositories;
 
 import com.elian.proximidade_certa.entities.Establishment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
+public interface EstablishmentRepository extends JpaRepository<Establishment, Long>, JpaSpecificationExecutor<Establishment> {
 }

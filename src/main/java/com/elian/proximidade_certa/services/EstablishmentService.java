@@ -4,10 +4,14 @@ import com.elian.proximidade_certa.dto.EstablishmentRequestDTO;
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.entities.Establishment;
 import com.elian.proximidade_certa.repositories.EstablishmentRepository;
+import com.elian.proximidade_certa.specifications.EstablishmentSpecification;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +43,18 @@ public class EstablishmentService {
         return new EstablishmentResponseDTO(saveEstablishment);
     }
 
-    @Transactional(readOnly = true)
+    /* @Transactional(readOnly = true)
     public List<EstablishmentResponseDTO> findAll(){
         return repository.findAll().stream().map(EstablishmentResponseDTO::new).collect(Collectors.toList());
+    } */
+    @Transactional(readOnly = true)
+    public Page<EstablishmentResponseDTO> findAll(String name, String category, Pageable pageable){
+        //Specification para criar a query dinâmica
+        Specification<Establishment> spec = EstablishmentSpecification.searchBy(name, category);
+
+        Page<Establishment> page = repository.findAll(spec, pageable);
+
+        return page.map(EstablishmentResponseDTO::new);
     }
+
 }

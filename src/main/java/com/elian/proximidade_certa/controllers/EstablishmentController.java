@@ -5,6 +5,8 @@ import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.services.EstablishmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,8 +28,8 @@ public class EstablishmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EstablishmentResponseDTO>> findAll(){
-        List<EstablishmentResponseDTO> list = service.findAll();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<Page<EstablishmentResponseDTO>> findAll(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "category", required = false) String category, Pageable pageable){
+        Page<EstablishmentResponseDTO> page = service.findAll(name, category, pageable);
+        return ResponseEntity.ok(page);
     }
 }
