@@ -3,6 +3,7 @@ package com.elian.proximidade_certa.services;
 import com.elian.proximidade_certa.dto.EstablishmentRequestDTO;
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.entities.Establishment;
+import com.elian.proximidade_certa.exceptions.ResourceNotFoundException;
 import com.elian.proximidade_certa.repositories.EstablishmentRepository;
 import com.elian.proximidade_certa.specifications.EstablishmentSpecification;
 import org.locationtech.jts.geom.Coordinate;
@@ -55,6 +56,31 @@ public class EstablishmentService {
         Page<Establishment> page = repository.findAll(spec, pageable);
 
         return page.map(EstablishmentResponseDTO::new);
+    }
+
+    @Transactional
+    public EstablishmentResponseDTO update(Long id, EstablishmentRequestDTO dto){
+        Establishment entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Estabelecimento não encontrado com o id: "+id));
+
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
+        entity.setCategory(dto.category());
+
+        Point location = geometryFactory.createPoint(new Coordinate(dto.longitude(), dto.latitude()));
+        location.setSRID(4326);
+        entity.setLocation(location);
+
+        entity = repository.save(entity);
+
+        return new EstablishmentResponseDTO(entity);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Estabelecimento não encontrado com id: " + id);
+        }
+        repository.deleteById(id);
     }
 
 }

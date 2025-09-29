@@ -32,4 +32,16 @@ public class EstablishmentController {
         Page<EstablishmentResponseDTO> page = service.findAll(name, category, pageable);
         return ResponseEntity.ok(page);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EstablishmentResponseDTO> update(@PathVariable Long id, @RequestBody @Valid EstablishmentRequestDTO dto){
+        EstablishmentResponseDTO updatedDto = service.update(id, dto);
+        return ResponseEntity.ok(updatedDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
