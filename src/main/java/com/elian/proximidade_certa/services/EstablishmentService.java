@@ -58,6 +58,14 @@ public class EstablishmentService {
         return page.map(EstablishmentResponseDTO::new);
     }
 
+    @Transactional(readOnly = true)
+    public EstablishmentResponseDTO findById(Long id) {
+        Establishment entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Estabelecimento não encontrado com id: " + id));
+
+        return new EstablishmentResponseDTO(entity);
+    }
+
     @Transactional
     public EstablishmentResponseDTO update(Long id, EstablishmentRequestDTO dto){
         Establishment entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Estabelecimento não encontrado com o id: "+id));

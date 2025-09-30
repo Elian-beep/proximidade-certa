@@ -33,6 +33,12 @@ public class EstablishmentController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EstablishmentResponseDTO> findById(@PathVariable Long id) {
+        EstablishmentResponseDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<EstablishmentResponseDTO> update(@PathVariable Long id, @RequestBody @Valid EstablishmentRequestDTO dto){
         EstablishmentResponseDTO updatedDto = service.update(id, dto);
