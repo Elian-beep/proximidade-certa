@@ -10,6 +10,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.locationtech.jts.geom.Point;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "establishments")
@@ -31,4 +33,6 @@ public class Establishment {
     private Instant createdAt;
     @UpdateTimestamp
     private Instant updatedAt;
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rating> ratings = new HashSet<>();
 }
