@@ -35,4 +35,41 @@ public class RatingService {
 
         return new RatingResponseDTO(savedRating);
     }
+
+    @Transactional
+    public RatingResponseDTO update(Long establishmentId, Long ratingId, RatingRequestDTO dto) {
+        if (!establishmentRepository.existsById(establishmentId)) {
+            throw new ResourceNotFoundException("Estabelecimento não encontrado com id: " + establishmentId);
+        }
+
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Avaliação não encontrada com id: " + ratingId));
+
+        if (!rating.getEstablishment().getId().equals(establishmentId)) {
+            throw new ResourceNotFoundException("A avaliação " + ratingId + " não pertence ao estabelecimento " + establishmentId);
+        }
+
+        rating.setScore(dto.score());
+        rating.setComment(dto.comment());
+        rating.setAuthorName(dto.authorName());
+
+        Rating updatedRating = ratingRepository.save(rating);
+        return new RatingResponseDTO(updatedRating);
+    }
+
+    @Transactional
+    public void delete(Long establishmentId, Long ratingId) {
+        if (!establishmentRepository.existsById(establishmentId)) {
+            throw new ResourceNotFoundException("Estabelecimento não encontrado com id: " + establishmentId);
+        }
+
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Avaliação não encontrada com id: " + ratingId));
+
+        if (!rating.getEstablishment().getId().equals(establishmentId)) {
+            throw new ResourceNotFoundException("A avaliação " + ratingId + " não pertence ao estabelecimento " + establishmentId);
+        }
+
+        ratingRepository.delete(rating);
+    }
 }

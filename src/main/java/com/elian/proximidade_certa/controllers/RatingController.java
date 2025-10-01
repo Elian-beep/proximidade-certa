@@ -29,4 +29,23 @@ public class RatingController {
 
         return ResponseEntity.created(uri).body(newDto);
     }
+
+    @PutMapping("/{ratingId}")
+    public ResponseEntity<RatingResponseDTO> update(
+            @PathVariable Long establishmentId,
+            @PathVariable Long ratingId,
+            @RequestBody @Valid RatingRequestDTO dto) {
+
+        RatingResponseDTO updatedDto = service.update(establishmentId, ratingId, dto);
+        return ResponseEntity.ok(updatedDto);
+    }
+
+    @DeleteMapping("/{ratingId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long establishmentId,
+            @PathVariable Long ratingId) {
+
+        service.delete(establishmentId, ratingId);
+        return ResponseEntity.noContent().build();
+    }
 }
