@@ -51,16 +51,18 @@ public class EstablishmentService {
     @Transactional(readOnly = true)
     public Page<EstablishmentResponseDTO> findAll(String name, String category, Pageable pageable){
         //Specification para criar a query dinâmica
+        /* Modelo antigo:
         Specification<Establishment> spec = EstablishmentSpecification.searchBy(name, category);
-
         Page<Establishment> page = repository.findAll(spec, pageable);
-
         return page.map(EstablishmentResponseDTO::new);
+        */
+        return repository.findAllPagedWithAvgRating(name, category, pageable);
+
     }
 
     @Transactional(readOnly = true)
     public EstablishmentResponseDTO findById(Long id) {
-        Establishment entity = repository.findById(id)
+        Establishment entity = repository.findByIdWithRatings(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Estabelecimento não encontrado com id: " + id));
 
         return new EstablishmentResponseDTO(entity);
