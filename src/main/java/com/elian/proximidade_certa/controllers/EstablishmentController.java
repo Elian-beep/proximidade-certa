@@ -50,4 +50,15 @@ public class EstablishmentController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/proximos")
+    public ResponseEntity<Page<EstablishmentResponseDTO>> findNearby(
+            @RequestParam(value = "latitude") double latitude,
+            @RequestParam(value = "longitude") double longitude,
+            @RequestParam(value = "radius", defaultValue = "5000.0") double radius, // Raio em metros, 5km por padrão
+            Pageable pageable) {
+
+        Page<EstablishmentResponseDTO> page = service.findNearby(latitude, longitude, radius, pageable);
+        return ResponseEntity.ok(page);
+    }
 }
