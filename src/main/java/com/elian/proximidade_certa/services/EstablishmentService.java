@@ -93,4 +93,18 @@ public class EstablishmentService {
         repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public Page<EstablishmentResponseDTO> findNearby(double latitude, double longitude, double radiusInMeters, Pageable pageable) {
+        // 1. Cria um objeto Point para a localização do usuário
+        Point userLocation = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        userLocation.setSRID(4326); // Define o sistema de coordenadas (WGS 84)
+
+        Page<Establishment> page = repository.findNearby(userLocation, radiusInMeters, pageable);
+
+        // 3. Mapeia a página de entidades para uma página de DTOs de resposta
+        // Usaremos o construtor que já calcula a média de avaliações
+        return page.map(establishment -> new EstablishmentResponseDTO(establishment,
+                establishment.getRatings().stream().mapToInt(r -> r.getScore()).average().orElse(0.0)));
+    }
+
 }

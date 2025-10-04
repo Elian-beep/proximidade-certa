@@ -2,6 +2,7 @@ package com.elian.proximidade_certa.repositories;
 
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.entities.Establishment;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.awt.*;
 import java.util.Optional;
 
 @Repository
@@ -39,4 +41,11 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     // TODO: Revisar a explicação desta query
     @Query("SELECT e FROM Establishment e JOIN FETCH e.ratings WHERE e.id = :id")
     Optional<Establishment> findByIdWithRatings(@Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT e.* FROM establishments e WHERE ST_DWithin(e.location, :userLocation, :radius) = true")
+    Page<Establishment> findNearby(
+            @Param("userLocation") Point userLocation,
+            @Param("radius") double radius,
+            Pageable pageable
+    );
 }
