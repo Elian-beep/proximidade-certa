@@ -2,6 +2,7 @@ package com.elian.proximidade_certa.controllers;
 
 import com.elian.proximidade_certa.dto.EstablishmentRequestDTO;
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
+import com.elian.proximidade_certa.dto.EstablishmentUpdateDTO;
 import com.elian.proximidade_certa.services.EstablishmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class EstablishmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EstablishmentResponseDTO> update(@PathVariable Long id, @RequestBody @Valid EstablishmentRequestDTO dto){
+    public ResponseEntity<EstablishmentResponseDTO> update(@PathVariable Long id, @RequestBody @Valid EstablishmentUpdateDTO dto){
         EstablishmentResponseDTO updatedDto = service.update(id, dto);
         return ResponseEntity.ok(updatedDto);
     }
