@@ -3,6 +3,7 @@ package com.elian.proximidade_certa.controllers;
 import com.elian.proximidade_certa.dto.EstablishmentRequestDTO;
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.dto.EstablishmentUpdateDTO;
+import com.elian.proximidade_certa.dto.route.RouteResponseDTO;
 import com.elian.proximidade_certa.services.EstablishmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +62,15 @@ public class EstablishmentController {
 
         Page<EstablishmentResponseDTO> page = service.findNearby(latitude, longitude, radius, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}/route")
+    public ResponseEntity<RouteResponseDTO> getRoute(
+            @PathVariable Long id,
+            @RequestParam(value = "fromLat") double fromLat,
+            @RequestParam(value = "fromLon") double fromLon) {
+
+        RouteResponseDTO routeDto = service.getRouteForEstablishment(id, fromLat, fromLon);
+        return ResponseEntity.ok(routeDto);
     }
 }

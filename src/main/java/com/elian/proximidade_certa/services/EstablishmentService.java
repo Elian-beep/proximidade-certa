@@ -3,6 +3,7 @@ package com.elian.proximidade_certa.services;
 import com.elian.proximidade_certa.dto.EstablishmentRequestDTO;
 import com.elian.proximidade_certa.dto.EstablishmentResponseDTO;
 import com.elian.proximidade_certa.dto.EstablishmentUpdateDTO;
+import com.elian.proximidade_certa.dto.route.RouteResponseDTO;
 import com.elian.proximidade_certa.entities.Establishment;
 import com.elian.proximidade_certa.exceptions.ResourceNotFoundException;
 import com.elian.proximidade_certa.repositories.EstablishmentRepository;
@@ -162,6 +163,22 @@ public class EstablishmentService {
         // Usaremos o construtor que já calcula a média de avaliações
         return page.map(establishment -> new EstablishmentResponseDTO(establishment,
                 establishment.getRatings().stream().mapToInt(r -> r.getScore()).average().orElse(0.0)));
+    }
+
+    @Transactional(readOnly = true)
+    public RouteResponseDTO getRouteForEstablishment(Long establishmentId, double originLat, double originLon) {
+        // 1. Busca o estabelecimento de destino
+        Establishment destinationEntity = repository.findById(establishmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Estabelecimento não encontrado com id: " + establishmentId));
+
+        // 2. Cria os pontos de origem e destino
+        Point originPoint = geometryFactory.createPoint(new Coordinate(originLon, originLat));
+        originPoint.setSRID(4326);
+
+        Point destinationPoint = destinationEntity.getLocation();
+
+        // 3. Chama o ArcGisService para calcular a rota completa
+        return arcGisService.calculateRouteWithGeometry(originPoint, destinationPoint);
     }
 
 }
